@@ -17,7 +17,7 @@ app.use(express.json())
 
 
 // connection
-mongoose.connect(`mongodb+srv://${DBUSER}:${DBPASS}@umesh.hybg3.mongodb.net/${DBNAME}?retryWrites=true&w=majority`,(err)=>{
+mongoose.connect(``,(err)=>{
     if(err) return console.log(err)
     console.log('connected with db')
 })
