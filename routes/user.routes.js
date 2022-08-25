@@ -51,18 +51,16 @@ router.get("/:_id", (req, res) => {
 router.put("/:_id", (req, res) => {
   const { _id } = req.params;
 
-  const {email}=req.body
+  const { email } = req.body;
 
-  if(!email) return res.status(400).json({ msg: "Please Enter Details" });
+  if (!email) return res.status(400).json({ msg: "Please Enter Details" });
 
-  UserSchema.findByIdAndUpdate({ _id }, {email},(err, data) => {
+  UserSchema.findByIdAndUpdate({ _id }, { email }, (err, data) => {
     if (err) return res.status(500).json({ msg: err.message });
     if (!data) return res.status(200).json({ msg: "No User Found" });
     res.status(200).json({ msg: "User Updated" });
   });
 });
-
-
 
 // delete user
 router.delete("/:_id", (req, res) => {
@@ -72,6 +70,32 @@ router.delete("/:_id", (req, res) => {
     if (err) return res.status(500).json({ msg: err.message });
     if (!data) return res.status(200).json({ msg: "No User Found" });
     res.status(200).json({ msg: "User Deleted" });
+  });
+});
+
+// login user
+router.post("/login", (req, res) => {
+  const { email, password } = req.body;
+
+
+  if (!email || !password)
+    return res.status(400).json({ msg: "Please Enter Details" });
+
+
+  // check user exists or not
+  UserSchema.findOne({ email }, (err, data) => {
+    if (err) return res.status(500).json({ msg: err.message });
+    if (!data) return res.status(404).json({ msg: "Something Wrong" });
+
+    let dbPass = data.password;
+
+    // match user password with database
+
+    bcrypt.compare(password, dbPass, (err, isValid) => {
+      if (err) return res.status(502).json({ msg: err.message });
+      if (!isValid) return res.status(404).json({ msg: "Something Wrong" });
+      res.status(200).json({ msg: "Login Success" });
+    });
   });
 });
 
