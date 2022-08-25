@@ -1,5 +1,6 @@
 const express = require("express");
 const UserSchema = require("../models/user.model");
+const bcrypt = require("bcrypt");
 
 const router = express.Router();
 
@@ -13,13 +14,21 @@ router.post("/register", (req, res) => {
   if (!email || !password)
     return res.status(400).json({ msg: "Please Enter Details" });
 
-  let insUser = new UserSchema({ email, password });
-
-  insUser.save((err, data) => {
+  // generate bcrpt
+  bcrypt.hash(password, 12, (err, hashPass) => {
     if (err) return res.status(500).json({ msg: err.message });
-    if (!data) return res.status(501).json({ msg: "Dont Know" });
-    res.status(200).json({ msg: "Done" });
+    if (!hashPass) return res.status(501).json({ msg: "Please Try Again" });
+    // insert user into database
+    let insUser = new UserSchema({ email, password:hashPass });
+  
+    insUser.save((err, data) => {
+      if (err) return res.status(500).json({ msg: err.message });
+      if (!data) return res.status(501).json({ msg: "Dont Know" });
+      res.status(200).json({ msg: "Done" });
+    });
+
   });
+
 });
 
 router.get("/users", (req, res) => {
@@ -29,5 +38,12 @@ router.get("/users", (req, res) => {
     res.status(200).json({ msg: data });
   });
 });
+
+
+
+
+
+
+
 
 module.exports = router;
