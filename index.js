@@ -10,14 +10,14 @@ const mongoose=require("mongoose")
 // variables
 const app = express();
 const {PORT,DBPASS,DBUSER,DBNAME}=process.env;
-const port = PORT || 8000;
+const port = PORT || 8080;
 
 // middlewares
 app.use(express.json())
 
 
 // connection
-mongoose.connect(``,(err)=>{
+mongoose.connect(`mongodb+srv://${DBUSER}:${DBPASS}@umesh.hybg3.mongodb.net/${DBNAME}?retryWrites=true&w=majority`,(err)=>{
     if(err) return console.log(err)
     console.log('connected with db')
 })
